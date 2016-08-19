@@ -1,0 +1,175 @@
+
+svg {
+  background-color: #AAA;
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+svg:not(.active):not(.ctrl) {
+  cursor: crosshair;
+}
+
+path.link {
+  fill: none;
+  stroke: #CCC;
+  stroke-width: 7px;
+  cursor: default;
+}
+
+svg:not(.active):not(.ctrl) path.link {
+  cursor: pointer;
+}
+
+path.link.selected {
+  stroke-dasharray: 10,2;
+}
+
+path.link.dragline {
+  pointer-events: none;
+}
+
+path.link.hidden {
+  stroke-width: 0;
+}
+
+path.link.interpreted {
+  stroke: #88FF88;
+}
+
+path.link.exception {
+  stroke: #FF0000;
+}
+
+circle.node {
+  stroke-width: 1.5px;
+  stroke: #CCC;
+  cursor: pointer;
+}
+
+circle.node.reflexive {
+  stroke: #000 !important;
+  stroke-width: 2.5px;
+}
+
+circle.node.unsaved {
+  stroke: #00F !important;
+  stroke-width: 2.5px;
+}
+
+circle.node.interpreterSource {
+  stroke: #0F0 !important;
+  stroke-width: 2.5px;
+}
+
+circle.node.exception {
+  stroke: #F00 !important;
+  stroke-width: 2.5px;
+}
+
+
+text {
+  font: 12px sans-serif;
+  pointer-events: none;
+}
+
+text.id {
+  text-anchor: middle;
+  font-weight: bold;
+}
+
+
+.validationError {
+  color: red;
+}
+
+
+
+
+
+///////////////Bar Chart
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: 0.5;
+    stroke-width: 2px;
+    shape-rendering: crispEdges;
+}
+  
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.bar {
+  fill: orange;
+}
+
+.bar:hover {
+  fill: orangered ;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+ .bar0 {
+    fill: red;
+    opacity: 0.75;
+  }
+  
+  .bar1 {
+    fill: blue;
+    opacity: 0.75;
+  }
+  .bar1:hover {
+    fill: yellow;
+  }
+
+ .bar2 {
+    fill: green;
+    opacity: 0.75;
+  }
+
+ .bar3 {
+    fill: orange;
+    opacity: 0.75;
+  }
+
+  .bar4 {
+    fill: purple;
+    opacity: 0.75;
+  }
+
+  

@@ -1,0 +1,20 @@
+'use strict';
+
+describe('Probability Service', function () {
+  // load the controller's module
+  beforeEach(module('worldsviewApp'));  
+
+  var service;
+
+  // Initialize the controller and a mock scope
+  beforeEach(inject(function (ProbabilityService) {
+    service = ProbabilityService;
+  }));
+
+  it('return convert values into distribution', function () {
+    
+    service.asDistribution([1,2,3]);
+
+    expect(scope.awesomeThings.length).toBe(4);
+  });
+});

@@ -1,0 +1,265 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<nav class="navbar navbar-default" collapse="isCollapsed2">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" ng-click="isCollapsed2 = !isCollapsed2">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" ng-click="toggleEdit()" href="#"  ng-show="!decisionEdit" >{{decision.name}}</a>
+          <form class="navbar-form navbar-left" ng-show="decisionEdit">
+              <div class="form-group">
+                <input type="text" class="form-control" ng-model="decision.name"></input>
+                <button type="submit" class="btn btn-default" ng-click="saveDecision()">Save</button>
+               </div>
+          </form>
+        </div>
+        <div>
+            <a class="navbar-text navbar-right" href="#" ng-click="toggleViewType()">View {{viewType}}</a>
+            <a class="navbar-text navbar-right" href="#" ng-click="toggleCompare()">Compare</a>            
+            <a class="navbar-text navbar-right" href="#" ng-click="toggleEvaluation()">Eval</a>
+            <a class="navbar-text navbar-right" ng-click="toggleStrategies()"  href="#">Strategies</a>
+            <a class="navbar-text navbar-right"  ng-click="toggleTests()" href="#">Tests</a>
+            <a class="navbar-text navbar-right"  ng-click="runTests()" href="#">Run Tests</a>
+            <a class="navbar-text navbar-right" href="#" ng-click="toggleInjections()">Injections</a>
+
+            <a class="navbar-text navbar-right" href="#" ng-show="!simulationconfigEdit" ng-click="toggleSimulationConfig()">{{simulationconfig}}</a>            
+            <form class="navbar-form navbar-right" ng-show="simulationconfigEdit" >
+              <div class="form-group" > 
+                Iterations
+                <input type="text" size="1" class="form-control" ng-model="simulation.iterations"></input>
+                Repeat          
+                <input type="text" size="1" class="form-control" ng-model="simulation.repeats"></input>
+              </div>              
+              <select  ng-model="simulation.strategy">
+                    <option ng-repeat="strategy in strategies" value="{{strategy._id}}" >{{strategy.name}}</option>
+                </select> 
+                 <button type="submit" class="btn btn-default" ng-click="toggleSimulationConfig()">Close</button>
+            </form>
+
+            <a class="navbar-text navbar-right" href="#" ng-show="!simulationRunning" ng-click="runSimulation()">Run</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">            
+    <div class="row">
+        <div id="editorrow" class="col-sm-6">                      
+           <progressbar animate="false" max="progressTotal" value="progressCurrent"></progressbar>
+            <svg id="editor" width="100%" height="400" style="background: #FFF">
+                <defs>
+                    <!-- define arrow markers for graph links -->
+                        <marker id="end-arrow" viewBox="0 -5 10 10" refX="6" markerWidth="3" markerHeight="3" orient="auto">
+                            <path d="M0,-5L10,0L0,5" fill="#CCC"/></path>
+                        </marker>
+                        <marker id="start-arrow" viewBox="0 -5 10 10" refX="4" markerWidth="3" markerHeight="3" orient="auto">
+                            <path d="M10,-5L0,0L10,5" fill="#CCC"/></path>
+                        </marker>    
+                     </defs>
+            </svg>
+        </div>
+        
+        <div class="col-sm-6" ng-show="testEdit">            
+            <svg id="testeditor" width="100%" height="400" style="background: #FFF">
+                <defs>                    
+                        <marker id="end-arrow" viewBox="0 -5 10 10" refX="6" markerWidth="3" markerHeight="3" orient="auto">
+                            <path d="M0,-5L10,0L0,5" fill="#CCC"/></path>
+                        </marker>
+                        <marker id="start-arrow" viewBox="0 -5 10 10" refX="4" markerWidth="3" markerHeight="3" orient="auto">
+                            <path d="M10,-5L0,0L10,5" fill="#CCC"/></path>
+                        </marker>    
+                     </defs>
+            </svg>
+        </div>
+
+
+        <div class="col-sm-6" ng-show="strategyEdit || compareEdit">            
+            <svg id="strategyeditor" width="100%" height="400" style="background: #FFF">
+                <defs>                    
+                        <marker id="end-arrow" viewBox="0 -5 10 10" refX="6" markerWidth="3" markerHeight="3" orient="auto">
+                            <path d="M0,-5L10,0L0,5" fill="#CCC"/></path>
+                        </marker>
+                        <marker id="start-arrow" viewBox="0 -5 10 10" refX="4" markerWidth="3" markerHeight="3" orient="auto">
+                            <path d="M10,-5L0,0L10,5" fill="#CCC"/></path>
+                        </marker>    
+                     </defs>
+            </svg>
+        </div>
+
+         <div class="col-sm-6" ng-show="evaluationEdit">
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="evaluation.expression" ng-change="evaluate()">
+                  <span class="input-group-addon">{{evaluation.result}}</span>
+                </div>                
+        </div>  
+
+        <div class="col-sm-6" ng-show="selectedNode!=null  && !compareEdit && !testEdit && !strategyEdit && !injectionEdit && !evaluationEdit">
+            <svg ng-show="selectedHasDistribution" id="distributionview" width="100%" height="200" style="background: #FFF"></svg>
+            <svg ng-show="selectedHasSeries" id="timeseriesview" width="100%" height="200" style="background: #FFF"></svg>
+        </div>
+    </div> 
+    
+    <div class="row" ng-if="!compareEdit">
+        <div class="col-sm-6">   
+            <div> 
+                <div class="input-group">
+                    <button type="submit" class="btn btn-default" ng-click="toggleParameterType()">{{parameterType}}</button>
+                    <span class="input-group-addon">Parameter</span>
+                </div>  
+                
+                <div class="input-group" ng-repeat="var in networkstate">              
+                  <input type="text" class="form-control" ng-model="var.val">
+                  <span class="input-group-addon">{{var.key}}</span>
+                </div>
+            </div>                
+        </div>        
+
+        <div class="col-sm-6">
+          <div ng-show="selectedNode && !testEdit && !strategyEdit">
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.name">
+                  <span class="input-group-addon">Name</span>
+                </div>
+                <div class="input-group">   
+                    <textarea rows="4" type="text" columns="3" class="form-control" ng-model="selectedNode.script"/>                         
+                    <span class="input-group-addon">Expression</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.expression">
+                  <span class="input-group-addon">Distribution</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.series">
+                  <span class="input-group-addon">Series</span>
+                </div>
+                <p/>
+                <div class="input-group">              
+                  <input type="text"  class="form-control" ng-model="selectedNode.value">
+                  <span class="input-group-addon">Value</span>
+                </div>
+                <div class="input-group">              
+                    <select class="form-control">
+                        <option ng-repeat="v in sampleValues">{{v}}</option>
+                    </select>             
+                  <span class="input-group-addon">Value</span>
+                </div>
+                 <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.minimum">
+                  <span class="input-group-addon">Minimum</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.maximum">
+                  <span class="input-group-addon">Maximum</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.medium">
+                  <span class="input-group-addon">Medium</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedNode.standardDeviation">
+                  <span class="input-group-addon">Std Dev</span>
+                </div>
+          </div>           
+          <div ng-show="selectedLink">
+                <div class="input-group">   
+                    <textarea rows="4" type="text" columns="3" class="form-control" ng-model="selectedLink.expression"/>                         
+                    <span class="input-group-addon">Expression</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedLink.value">
+                  <span class="input-group-addon">Value</span>
+                </div>                
+          </div>
+      
+          <div ng-if="testEdit">
+            <table class="table">
+                <tr ng-repeat="test in tests">
+                    <td>{{test.expression}}</td>
+                    <td ng-if="test.success"><span class="glyphicon glyphicon-ok"></span></td>
+                    <td ng-if="!test.success"><span class="glyphicon glyphicon-remove"></span>{{test.result}}</td>
+                </tr>
+            </table> 
+          </div>
+
+          <div ng-show="selectedNode==null">
+            <div ng-if="strategyEdit && selectedStrategy!=null">
+                <div class="input-group">
+                    <button type="submit" class="btn btn-default" ng-click="saveStrategy()">Save</button>
+                    <button type="submit" class="btn btn-default" ng-click="closeStrategy()">Close</button>
+                    <span class="input-group-addon">Strategy</span>
+                </div> 
+                <div class="input-group">   
+                    <input type="text" class="form-control" ng-model="selectedStrategy.name"/> 
+                    <span class="input-group-addon">Name</span>                
+                </div>                
+                <div class="input-group">
+                  <a href="#" ng-click="addStrategyExpression()"><span class="glyphicon glyphicon-plus"></span></a><br/>      
+                  <span ng-repeat="component in selectedStrategy.expressions"><input type="text" ng-model="component.expression" /><a href="#" ng-click="delStrategyExpression(component)"><span class="glyphicon glyphicon-remove"></span></a><br/></span>
+                  <span class="input-group-addon">Expressions</span>
+                </div>
+            </div>
+          </div>
+
+          <div ng-if="testEdit && selectedTestCase!=null">   
+                <div class="input-group">
+                    <!-- <button type="submit" class="btn btn-default" ng-click="saveTestCase()">Save</button>
+                    <button type="submit" class="btn btn-default" ng-click="closeTestCase()">Close</button> -->
+                    <button type="submit" class="btn btn-default" ng-click="runTestCase(selectedTestCase)">Run</button>
+                    <span class="input-group-addon">Test Case</span>
+                </div> 
+                <div class="input-group">   
+                    <input type="text" class="form-control" ng-model="selectedTestCase.name"/>                         
+                    <span class="input-group-addon">Name</span>                
+                </div>
+                <!-- <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedTestCase.iterations">
+                  <span class="input-group-addon">Iterations</span>
+                </div>
+                <div class="input-group">              
+                  <input type="text" class="form-control" ng-model="selectedTestCase.repeats">
+                  <span class="input-group-addon">Repeats</span>
+                </div> -->
+                <div class="input-group">              
+                  <select ng-options="s._id as s.name for s in strategies" ng-model="selectedTestCase.strategy"/>                                                  
+                  <span class="input-group-addon">Strategy</span>
+                </div>
+                <div class="input-group">
+
+                  <a href="#" ng-click="addOverride()"><span class="glyphicon glyphicon-plus"></span></a><br/>          
+                  <span ng-repeat="override in selectedTestCase.overrides"><input type="text" ng-model="override.expression" /><a href="#" ng-click="delOverride(override)"><span class="glyphicon glyphicon-remove"></span></a><br/></span>
+                  <span class="input-group-addon">Overrides</span>
+                </div>
+                <div class="input-group">  
+                  <a href="#" ng-click="addTest()"><span class="glyphicon glyphicon-plus"></span></a><br/>   
+                  <span ng-repeat="test in selectedTestCase.tests"><input type="text" ng-model="test.expression" /><a href="#" ng-click="delTest(test)"><span class="glyphicon glyphicon-remove"></span></a><br/></span>
+                  <span class="input-group-addon">Tests</span>
+                </div>                            
+          </div>
+
+          <div ng-if="injectionEdit">
+                 <div class="input-group">
+                    <button type="submit" class="btn btn-default" ng-click="saveInjections()">Save</button>
+                    <button type="submit" class="btn btn-default" ng-click="closeInjections()">Close</button>
+                    <span class="input-group-addon">Injections</span>
+                </div>
+                <div class="input-group">
+                    <textarea type="text" rows="15" class="form-control" ng-model="decision.injections"></textarea>
+                    <span class="input-group-addon">Expression</span>    
+                </div>
+          </div>
+
+        </div>
+
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-12" ng-show="compareEdit">                 
+            <svg id="comparisonview" width="100%" height="400" style="background: #FFF"></svg>            
+        </div>
+    </div>
+  </div>
+</div>
