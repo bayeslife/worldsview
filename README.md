@@ -7,7 +7,16 @@
 
 - make changes
 - build (this is a custom task which doesnt minify stuff)
-grunt build2  
+```grunt build2```
+
+
+On a server initialize a bare repo
+```git init --bare```
+
+Back in the source add the remote
+```git remote add production ssh://xceptionale2018:/home/ubuntu/repo```
+
+
 - publish
 cd dist
 git add .
