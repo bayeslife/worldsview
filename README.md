@@ -1,5 +1,6 @@
 # README #
 
+
 ### How do I publish ###
 
 - edit the mathjs bower.json and change the 'main' from math.min.js to math.js.
